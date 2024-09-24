@@ -14,15 +14,25 @@ bot.on('polling_error', (error) => {
     console.error('Polling error:', error.code, error.message);
 });
 
-// Handle incoming messages
+// Automatically show "Start" button in the custom keyboard
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const messageText = msg.text;
 
-    if (messageText === '/start') {
-        const howToPlay = "Welcome to the game! Here's how to play: ..."; // Add your how-to-play guide here.
+    if (messageText === '/start' || messageText === 'Start') {
+        const howToPlay = `
+Welcome to the Game! 🐾
+
+How to play:
+1. Complete tasks to earn points.
+2. Climb up the leaderboard.
+3. Have fun!
+
+Click the button below to start playing the game.
+        `;
+
         const gameUrl = 'https://lost-cats.onrender.com'; // Your game URL
-        
+
         bot.sendMessage(chatId, howToPlay)
             .then(() => {
                 return bot.sendMessage(chatId, 'Click here to play the game!', {
@@ -44,6 +54,17 @@ bot.on('message', (msg) => {
             .catch((err) => {
                 console.error(`Failed to send message to chat ${chatId}:`, err.message);
             });
+    } else {
+        // Show the "Start" button if no specific message is sent
+        bot.sendMessage(chatId, 'Please press Start to begin.', {
+            reply_markup: {
+                keyboard: [
+                    [{ text: 'Start' }] // Custom "Start" button
+                ],
+                resize_keyboard: true, // Optional: makes the keyboard fit the screen
+                one_time_keyboard: true // Optional: hides the keyboard after one use
+            }
+        });
     }
 });
 
