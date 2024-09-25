@@ -8,10 +8,15 @@ router.get('/', async (req, res) => {
     try {
         // Fetch all users sorted by ctsBalance
         const users = await User.find().sort({ ctsBalance: -1 }).exec();
-        const leaderboard = users.map(user => ({
-            userName: user.userName,
-            score: user.ctsBalance
-        }));
+
+        // Fallback if no users are found
+        const leaderboard = users.length > 0 
+            ? users.map(user => ({
+                userName: user.userName,
+                score: user.ctsBalance
+            }))
+            : []; // Return empty array if no users found
+
         res.json(leaderboard);
     } catch (error) {
         console.error(error);
