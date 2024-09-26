@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const taskRoutes = require('./routes/tasks');
 const userRoutes = require('./routes/users');
 const leaderboardRoutes = require('./routes/leaderboard');
+const farmRoutes = require('./routes/farmRoutes');
 
 require('./telegramBot'); // Adjust the path if necessary
 
@@ -37,6 +38,7 @@ mongoose
 app.use('/api/tasks', taskRoutes); // Task routes
 app.use('/api/users', userRoutes); // User routes
 app.use('/api/leaderboard', leaderboardRoutes); // Leaderboard routes
+app.use('/api/farm', farmRoutes);
 
 // Start the server
 app.listen(PORT, () => {
