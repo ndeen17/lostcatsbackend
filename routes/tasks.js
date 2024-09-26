@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get all tasks
+// Get all tasks (no changes)
 router.get('/', async (req, res) => {
   try {
     const tasks = await Task.find();
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Mark a task as completed and remove it from the database
+// Mark a task as completed (update user, don't delete task)
 router.post('/complete/:id', async (req, res) => {
   const { userName } = req.body;
   try {
@@ -39,12 +39,15 @@ router.post('/complete/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update user's CTS balance
-    user.ctsBalance += task.reward;
-    await user.save();
+    // Check if the task has already been completed by this user
+    if (user.completedTasks.includes(task.id)) {
+      return res.status(400).json({ message: 'Task already completed' });
+    }
 
-    // Remove the task from the database
-    await Task.findByIdAndDelete(req.params.id);
+    // Update user's CTS balance and add task to completed list
+    user.ctsBalance += task.reward;
+    user.completedTasks.push(task.id); // Add task ID to user's completed tasks
+    await user.save();
 
     res.json({ message: 'Task completed successfully', newBalance: user.ctsBalance });
   } catch (error) {
@@ -52,7 +55,22 @@ router.post('/complete/:id', async (req, res) => {
   }
 });
 
-// Update a task by ID
+// Get completed tasks for a specific user
+router.get('/completed/:userName', async (req, res) => {
+  try {
+    const { userName } = req.params;
+    const user = await User.findOne({ userName });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ completedTasks: user.completedTasks });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a task by ID (no changes)
 router.put('/:id', async (req, res) => {
   try {
     const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -63,7 +81,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete a task by ID
+// Delete a task by ID (no changes)
 router.delete('/:id', async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
