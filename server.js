@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const taskRoutes = require('./routes/tasks');
 const userRoutes = require('./routes/users');
 const leaderboardRoutes = require('./routes/leaderboard');
-const farmRoutes = require('./routes/farmRoutes');
+const farm = require('./routes/farm');
 
 require('./telegramBot'); // Adjust the path if necessary
 
@@ -36,10 +36,10 @@ mongoose
 
 // Routes
 app.use(cors()); // Enable CORS
-app.use('/api/tasks', taskRoutes); // Task routes
-app.use('/api/users', userRoutes); // User routes
-app.use('/api/leaderboard', leaderboardRoutes); // Leaderboard routes
-app.use('/api/farm', farmRoutes);
+app.use('/tasks', taskRoutes); // Task routes
+app.use('/users', userRoutes); // User routes
+app.use('/leaderboard', leaderboardRoutes); // Leaderboard routes
+app.use('/farm', farm);
 
 // Start the server
 app.listen(PORT, () => {
