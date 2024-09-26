@@ -35,11 +35,10 @@ mongoose
   });
 
 // Routes
-app.use(cors()); // Enable CORS
-app.use('/api/tasks', taskRoutes); // Task routes
-app.use('/api/users', userRoutes); // User routes
-app.use('/api/leaderboard', leaderboardRoutes); // Leaderboard routes
-app.use('/api/farm', farm);
+app.use('/tasks', taskRoutes); // Task routes
+app.use('/users', userRoutes); // User routes
+app.use('/leaderboard', leaderboardRoutes); // Leaderboard routes
+app.use('/farm', farm);
 
 // Start the server
 app.listen(PORT, () => {
