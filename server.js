@@ -35,6 +35,7 @@ mongoose
   });
 
 // Routes
+app.use(cors()); // Enable CORS
 app.use('/api/tasks', taskRoutes); // Task routes
 app.use('/api/users', userRoutes); // User routes
 app.use('/api/leaderboard', leaderboardRoutes); // Leaderboard routes
