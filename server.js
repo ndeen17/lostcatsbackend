@@ -39,7 +39,7 @@ app.use(cors()); // Enable CORS
 app.use('/tasks', taskRoutes); // Task routes
 app.use('/users', userRoutes); // User routes
 app.use('/leaderboard', leaderboardRoutes); // Leaderboard routes
-app.use('/api/farm', farm);
+app.use('/farm', farm);
 
 // Start the server
 app.listen(PORT, () => {
