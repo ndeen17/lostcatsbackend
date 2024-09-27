@@ -1,4 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
+const User = require('./models/User'); // Import the User model
 
 // Replace with your actual token
 const token = '8132499879:AAGdY59FiOYJmhVbLOehI7BSdu40AcO6-0Q';
@@ -22,6 +23,21 @@ bot.onText(/\/start/, async (msg) => {
 
     // Log the user information (for testing)
     console.log(`User Info - Username: ${userName}, First Name: ${firstName}, Chat ID: ${chatId}`);
+
+    // Check if the user already exists in the database
+    try {
+        let user = await User.findOne({ chatId: chatId.toString() });
+        if (!user) {
+            // If user doesn't exist, create a new one
+            user = new User({ userName: userName, chatId: chatId.toString() });
+            await user.save();
+            console.log(`New user registered: ${userName} with Chat ID: ${chatId}`);
+        } else {
+            console.log(`User already exists: ${userName}`);
+        }
+    } catch (err) {
+        console.error('Error saving user to the database:', err.message);
+    }
 
     // Send welcome message with instructions
     const welcomeMessage = `
