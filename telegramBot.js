@@ -22,7 +22,7 @@ bot.onText(/\/start/, async (msg) => {
     const firstName = msg.from.first_name; // Get first name
 
     // Log the user information (for testing)
-    console.log(User Info - Username: ${userName}, First Name: ${firstName}, Chat ID: ${chatId});
+    console.log(`User Info - Username: ${userName}, First Name: ${firstName}, Chat ID: ${chatId}`);
 
     // Check if the user already exists in the database
     try {
@@ -31,16 +31,16 @@ bot.onText(/\/start/, async (msg) => {
             // If user doesn't exist, create a new one
             user = new User({ userName: userName, chatId: chatId.toString() });
             await user.save();
-            console.log(New user registered: ${userName} with Chat ID: ${chatId});
+            console.log(`New user registered: ${userName} with Chat ID: ${chatId}`);
         } else {
-            console.log(User already exists: ${userName});
+            console.log(`User already exists: ${userName}`);
         }
     } catch (err) {
         console.error('Error saving user to the database:', err.message);
     }
 
     // Send welcome message with instructions
-    const welcomeMessage = 
+    const welcomeMessage = `
 Welcome to the Game! 🐾
 
 How to play:
@@ -49,7 +49,7 @@ How to play:
 3. Have fun!
 
 Click the button below to start playing the game.
-    ;
+    `;
 
     const gameUrl = 'https://lost-cats.onrender.com'; // Your game URL
 
