@@ -14,13 +14,17 @@ bot.on('polling_error', (error) => {
     console.error('Polling error:', error.code, error.message);
 });
 
-// Automatically show "Start" button in the custom keyboard
-bot.on('message', (msg) => {
+// Handle the /start command
+bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
-    const messageText = msg.text;
+    const userName = msg.from.username || msg.from.first_name; // Get username or first name
+    const firstName = msg.from.first_name; // Get first name
 
-    if (messageText === '/start' || messageText === 'Start') {
-        const howToPlay = `
+    // Log the user information (for testing)
+    console.log(`User Info - Username: ${userName}, First Name: ${firstName}, Chat ID: ${chatId}`);
+
+    // Send welcome message with instructions
+    const welcomeMessage = `
 Welcome to the Game! 🐾
 
 How to play:
@@ -29,32 +33,32 @@ How to play:
 3. Have fun!
 
 Click the button below to start playing the game.
-        `;
+    `;
 
-        const gameUrl = 'https://lost-cats.onrender.com'; // Your game URL
+    const gameUrl = 'https://lost-cats.onrender.com'; // Your game URL
 
-        bot.sendMessage(chatId, howToPlay)
-            .then(() => {
-                return bot.sendMessage(chatId, 'Click here to play the game!', {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                {
-                                    text: 'Play Game',
-                                    web_app: { url: gameUrl }
-                                }
-                            ]
-                        ]
+    // Send the welcome message and play button
+    await bot.sendMessage(chatId, welcomeMessage);
+    await bot.sendMessage(chatId, 'Click here to play the game!', {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    {
+                        text: 'Play Game',
+                        web_app: { url: gameUrl }
                     }
-                });
-            })
-            .then(() => {
-                console.log(`Game link sent to chat ${chatId}`);
-            })
-            .catch((err) => {
-                console.error(`Failed to send message to chat ${chatId}:`, err.message);
-            });
-    } else {
+                ]
+            ]
+        }
+    });
+});
+
+// Automatically show "Start" button in the custom keyboard
+bot.on('message', (msg) => {
+    const chatId = msg.chat.id;
+    const messageText = msg.text;
+
+    if (messageText !== '/start') {
         // Show the "Start" button if no specific message is sent
         bot.sendMessage(chatId, 'Please press Start to begin.', {
             reply_markup: {
