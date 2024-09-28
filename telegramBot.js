@@ -35,6 +35,10 @@ bot.onText(/\/start/, async (msg) => {
         } else {
             console.log(`User already exists: ${userName}`);
         }
+
+        // Send the user information to the frontend via API if needed (optional step)
+        // You can add any logic to notify or sync with the frontend here.
+
     } catch (err) {
         console.error('Error saving user to the database:', err.message);
     }
@@ -51,7 +55,7 @@ How to play:
 Click the button below to start playing the game.
     `;
 
-    const gameUrl = 'https://lost-cats.onrender.com'; // Your game URL
+    const gameUrl = 'http://localhost:5173/'; // Your game URL
 
     // Send the welcome message and play button
     await bot.sendMessage(chatId, welcomeMessage);
