@@ -54,7 +54,7 @@ How to play:
 2. Climb up the leaderboard.
 3. Have fun!`;
 
-    const gameUrl = 'https://lostcatsbackend.onrender.com/'; // Your live game URL
+    const gameUrl = 'https://lost-catspo.onrender.com'; // Your live game URL
 
     // Send the welcome message and play button
     await bot.sendMessage(chatId, welcomeMessage);
