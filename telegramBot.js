@@ -1,4 +1,4 @@
-const TelegramBot = require('node-telegram-bot-api'); 
+const TelegramBot = require('node-telegram-bot-api');
 const User = require('./models/User'); // Import the User model
 
 // Replace with your actual token
@@ -35,14 +35,6 @@ bot.onText(/\/start/, async (msg) => {
         } else {
             console.log(`User already exists: ${userName}`);
         }
-
-        // Set username in localStorage (client-side operation) via inline JavaScript in the message
-        await bot.sendMessage(chatId, `
-            <script>
-                localStorage.setItem('username', '${userName}');
-            </script>
-        `, { parse_mode: 'HTML' });
-
     } catch (err) {
         console.error('Error saving user to the database:', err.message);
     }
