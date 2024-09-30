@@ -45,13 +45,14 @@ How to play:
     });
 });
 
-// Automatically show "Start" button in the custom keyboard
+// Automatically show "Start" button if no command is recognized
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const messageText = msg.text;
 
-    if (messageText !== '/start') {
-        // Show the "Start" button if no specific message is sent
+    // Check if the message is not a command
+    if (messageText && !messageText.startsWith('/')) {
+        // Show the "Start" button if no specific command is sent
         bot.sendMessage(chatId, 'Please press Start to begin.', {
             reply_markup: {
                 keyboard: [[{ text: 'Start' }]], // Custom "Start" button
