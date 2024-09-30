@@ -5,6 +5,8 @@ const router = express.Router();
 // Create a new user
 router.post('/', async (req, res) => {
     const { userName } = req.body;
+
+    // Removed the duplicate username check
     try {
         const user = new User({ userName });
         await user.save();
@@ -32,6 +34,7 @@ router.get('/:userName', async (req, res) => {
 router.patch('/:userName', async (req, res) => {
     const { userName } = req.params;
     const { ctsBalance } = req.body;
+
     try {
         const user = await User.findOneAndUpdate({ userName }, { ctsBalance }, { new: true });
         if (!user) {

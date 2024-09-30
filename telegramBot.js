@@ -1,21 +1,14 @@
 const TelegramBot = require('node-telegram-bot-api');
 const mongoose = require('mongoose');
-const User = require('./models/User'); // Import the User model
 
 // Replace with your actual token (use environment variables in production)
-const token = '8132499879:AAGdY59FiOYJmhVbLOehI7BSdu40AcO6-0Q';
-
+const token = '8132499879:AAGdY59FiOYJmhVbLOehI7BSdu40AcO6-0Q'; // Use environment variable for security
 
 // Initialize the bot
 const bot = new TelegramBot(token, { polling: true });
 
 // Log when the bot is running
 console.log('Telegram Bot is running...');
-
-// Connect to MongoDB
-mongoose.connect('your_database_url_here', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
 
 // Error handling for polling errors
 bot.on('polling_error', (error) => {
@@ -25,25 +18,6 @@ bot.on('polling_error', (error) => {
 // Handle the /start command
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
-    const userName = msg.from.username || msg.from.first_name; // Get username or first name
-
-    // Log the user information (for testing)
-    console.log(`User Info - Username: ${userName}, Chat ID: ${chatId}`);
-
-    // Check if the user already exists in the database
-    try {
-        let user = await User.findOne({ chatId: chatId.toString() });
-        if (!user) {
-            // If user doesn't exist, create a new one
-            user = new User({ userName: userName, chatId: chatId.toString() });
-            await user.save();
-            console.log(`New user registered: ${userName} with Chat ID: ${chatId}`);
-        } else {
-            console.log(`User already exists: ${userName}`);
-        }
-    } catch (err) {
-        console.error('Error saving user to the database:', err.message);
-    }
 
     // Send welcome message with instructions
     const welcomeMessage = `
@@ -55,13 +29,17 @@ How to play:
 3. Have fun!`;
 
     const gameUrl = 'https://lost-catspo.onrender.com'; // Your live game URL
+    const communityUrl = 'https://t.me/your_telegram_community'; // Replace with your Telegram community link
+    const groupUrl = 'https://t.me/your_telegram_group'; // Replace with your Telegram group link
 
     // Send the welcome message and play button
     await bot.sendMessage(chatId, welcomeMessage);
-    await bot.sendMessage(chatId, 'Click here to play the game!', {
+    await bot.sendMessage(chatId, 'Meow!🐾 welcome to the hood kitty', {
         reply_markup: {
             inline_keyboard: [
-                [{ text: 'Play Game', web_app: { url: gameUrl } }]
+                [{ text: 'Play Game', web_app: { url: gameUrl } }],
+                [{ text: 'Join Community', url: communityUrl }], // Button for the Telegram community
+                [{ text: 'Join Group', url: groupUrl }] // Button for the Telegram group
             ]
         }
     });
