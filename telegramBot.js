@@ -28,7 +28,7 @@ How to play:
 2. Climb up the leaderboard.
 3. Have fun!`;
 
-    const gameUrl = 'https://lost-catspo.onrender.com'; // Your live game URL
+    const gameUrl = 'https://lost-cats.onrender.com'; // Your live game URL
     const communityUrl = 'https://t.me/your_telegram_community'; // Replace with your Telegram community link
     const groupUrl = 'https://t.me/your_telegram_group'; // Replace with your Telegram group link
 
