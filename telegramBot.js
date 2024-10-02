@@ -25,11 +25,11 @@ How to play:
 2. Climb up the leaderboard.
 3. Have fun!`;
 
-    const gameUrl = 'https://lost-catspo.onrender.com'; // Your live game URL
+    const gameUrl = 'https://lost-cats.onrender.com'; // Your live game URL
 
     // Save user telegramId and other details to backend
     try {
-        await axios.post('http://lostcalhost:5000/save-user', {
+        await axios.post('https://lostcatsbackend.onrender.com/save-user', {
             telegramId: telegramId,
         });
     } catch (error) {
@@ -53,7 +53,7 @@ bot.onText(/\/invite/, async (msg) => {
 
     try {
         // Call backend to generate invite link for this user
-        const response = await axios.post('http://lostcalhost:5000/generate-invite-link', {
+        const response = await axios.post('https://lostcatsbackend.onrender.com/generate-invite-link', {
             telegramId: chatId,
         });
         
