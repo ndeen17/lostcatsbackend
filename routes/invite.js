@@ -25,7 +25,7 @@ router.post('/generate-invite-link', async (req, res) => {
         await user.save();
 
         // Create invite link with unique code
-        const inviteLink = `https://your-telegram-bot-link.com/invite/${uniqueCode}`;
+        const inviteLink = `https://t.me/notdustbot?profile/invite/${uniqueCode}`;
         
         res.status(200).json({ inviteLink });
     } catch (error) {
