@@ -1,25 +1,22 @@
 const TelegramBot = require('node-telegram-bot-api');
-const mongoose = require('mongoose');
+const axios = require('axios'); // Use axios to send requests to your backend
 
 // Replace with your actual token (use environment variables in production)
-const token = '8132499879:AAGdY59FiOYJmhVbLOehI7BSdu40AcO6-0Q'; // Use environment variable for security
-
-// Initialize the bot
+const token = process.env.TELEGRAM_TOKEN; // Always use environment variables for sensitive data
 const bot = new TelegramBot(token, { polling: true });
 
-// Log when the bot is running
 console.log('Telegram Bot is running...');
 
-// Error handling for polling errors
 bot.on('polling_error', (error) => {
     console.error('Polling error:', error.code, error.message);
 });
 
-// Handle the /start command
+// Handle /start command
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
+    const telegramId = chatId; // This is the unique identifier for each user
 
-    // Send welcome message with instructions
+    // Send welcome message
     const welcomeMessage = `
 Welcome to the Game! 🐾
 
@@ -29,8 +26,15 @@ How to play:
 3. Have fun!`;
 
     const gameUrl = 'https://lost-cats.onrender.com'; // Your live game URL
-    const communityUrl = 'https://t.me/your_telegram_community'; // Replace with your Telegram community link
-    const groupUrl = 'https://t.me/your_telegram_group'; // Replace with your Telegram group link
+
+    // Save user telegramId and other details to backend
+    try {
+        await axios.post('https://your-backend-url.com/api/save-user', {
+            telegramId: telegramId,
+        });
+    } catch (error) {
+        console.error('Error saving user to backend:', error);
+    }
 
     // Send the welcome message and play button
     await bot.sendMessage(chatId, welcomeMessage);
@@ -38,32 +42,40 @@ How to play:
         reply_markup: {
             inline_keyboard: [
                 [{ text: 'Play Game', web_app: { url: gameUrl } }],
-                [{ text: 'Join Community', url: communityUrl }], // Button for the Telegram community
-                [{ text: 'Join Group', url: groupUrl }] // Button for the Telegram group
-            ]
-        }
+            ],
+        },
     });
 });
 
-// Automatically show "Start" button if no command is recognized
+// Handle invite link click
+bot.onText(/\/invite/, async (msg) => {
+    const chatId = msg.chat.id;
+
+    try {
+        // Call backend to generate invite link for this user
+        const response = await axios.post('https://your-backend-url.com/api/generate-invite-link', {
+            telegramId: chatId,
+        });
+        
+        const inviteLink = response.data.inviteLink;
+        bot.sendMessage(chatId, `Share this link with your friends to earn CTS: ${inviteLink}`);
+    } catch (error) {
+        console.error('Error generating invite link:', error);
+        bot.sendMessage(chatId, 'Failed to generate invite link.');
+    }
+});
+
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const messageText = msg.text;
 
-    // Check if the message is not a command
     if (messageText && !messageText.startsWith('/')) {
-        // Show the "Start" button if no specific command is sent
         bot.sendMessage(chatId, 'Please press Start to begin.', {
             reply_markup: {
-                keyboard: [[{ text: 'Start' }]], // Custom "Start" button
+                keyboard: [[{ text: 'Start' }]], 
                 resize_keyboard: true,
-                one_time_keyboard: true
-            }
+                one_time_keyboard: true,
+            },
         });
     }
-});
-
-// Error handling for webhook errors
-bot.on('webhook_error', (error) => {
-    console.error('Webhook error:', error.code, error.message);
 });
