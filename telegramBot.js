@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios'); // Use axios to send requests to your backend
 
 // Replace with your actual token (use environment variables in production)
-const token = process.env.TELEGRAM_TOKEN; // Always use environment variables for sensitive data
+const token = '7862848496:AAGpMgpRBlilVa8Mc8sFZvr6Sm_BipMavWA'; // Always use environment variables for sensitive data
 const bot = new TelegramBot(token, { polling: true });
 
 console.log('Telegram Bot is running...');
