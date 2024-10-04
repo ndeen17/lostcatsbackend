@@ -6,10 +6,10 @@ const REWARD_AMOUNT = 500;
 
 // Endpoint to generate an invite link
 router.post('/generate-invite-link', async (req, res) => {
-    const telegramId = req.body.telegramId;
+    const { userName } = req.body;
 
     try {
-        let user = await User.findOne({ telegramId });
+        let user = await User.findOne({ userName });
 
         if (!user) {
             return res.status(404).json({ message: "User not found." });
@@ -17,17 +17,10 @@ router.post('/generate-invite-link', async (req, res) => {
 
         // Generate unique invite code
         const uniqueCode = Math.random().toString(36).substr(2, 9);
-
-        // Increment invite count
-        user.inviteCount += 1;
-
-        // Save user data
+        user.inviteLink = `https://t.me/notdustbot?profile/invite/${uniqueCode}`; // Store the generated link
         await user.save();
-
-        // Create invite link with unique code
-        const inviteLink = `https://t.me/notdustbot?profile/invite/${uniqueCode}`;
         
-        res.status(200).json({ inviteLink });
+        res.status(200).json({ inviteLink: user.inviteLink });
     } catch (error) {
         console.error("Error generating invite link:", error);
         res.status(500).json({ message: "Failed to generate invite link." });
@@ -37,26 +30,22 @@ router.post('/generate-invite-link', async (req, res) => {
 // Endpoint for invitees to sign up using invite link
 router.post('/accept-invite/:inviteCode', async (req, res) => {
     const { inviteCode } = req.params;
-    const { telegramId } = req.body;
+    const { userName } = req.body;
 
     try {
-        // Find the inviter by searching for the inviteCode (assume it's managed in a different structure)
-        const inviter = await User.findOne({ inviteCount: { $gt: 0 } });
+        // Find the inviter by searching for the user who generated the invite
+        const inviter = await User.findOne({ inviteLink: { $regex: inviteCode } });
 
         if (!inviter) {
             return res.status(400).json({ message: "Invalid invite link." });
         }
 
         // Check if the invitee is already a user
-        let invitee = await User.findOne({ telegramId });
+        let invitee = await User.findOne({ userName });
 
         if (!invitee) {
             // Create a new user for the invitee
-            invitee = new User({
-                telegramId,
-                userName: req.body.userName, // Username from the request body
-                ctsBalance: 1000,
-            });
+            invitee = new User({ userName, ctsBalance: 1000 });
             await invitee.save();
         } else {
             return res.status(400).json({ message: "Invitee already exists." });
@@ -74,19 +63,19 @@ router.post('/accept-invite/:inviteCode', async (req, res) => {
     }
 });
 
-// Endpoint to get user invite data (for inviter dashboard)
+// Endpoint to get user invite data
 router.get('/invite-data', async (req, res) => {
-    const telegramId = req.query.telegramId;
+    const { userName } = req.query;
 
     try {
-        const user = await User.findOne({ telegramId }).select('inviteCount totalCTS');
+        const user = await User.findOne({ userName }).select('inviteLink totalCTS');
 
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
 
         res.status(200).json({
-            inviteCount: user.inviteCount,
+            inviteLink: user.inviteLink,
             ctsEarned: user.totalCTS,
         });
     } catch (error) {

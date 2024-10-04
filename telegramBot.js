@@ -38,7 +38,7 @@ How to play:
 
     // Send the welcome message and play button
     await bot.sendMessage(chatId, welcomeMessage);
-    await bot.sendMessage(chatId, 'Meow!🐾 welcome to the hood kitty', {
+    await bot.sendMessage(chatId, 'NODUST!🐾 welcomes you to the hood kitty', {
         reply_markup: {
             inline_keyboard: [
                 [{ text: 'Play Game', web_app: { url: gameUrl } }],
