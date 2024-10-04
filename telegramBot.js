@@ -27,42 +27,16 @@ How to play:
 
     const gameUrl = 'https://lost-cats.onrender.com'; // Your live game URL
 
-    // Save user telegramId and other details to backend
-    try {
-        await axios.post('https://lostcatsbackend.onrender.com/save-user', {
-            telegramId: telegramId,
-        });
-    } catch (error) {
-        console.error('Error saving user to backend:', error);
-    }
 
     // Send the welcome message and play button
     await bot.sendMessage(chatId, welcomeMessage);
-    await bot.sendMessage(chatId, 'NODUST!🐾 welcomes you to the hood kitty', {
+    await bot.sendMessage(chatId, 'NODUST!🐾 welcomes you to the hood', {
         reply_markup: {
             inline_keyboard: [
                 [{ text: 'Play Game', web_app: { url: gameUrl } }],
             ],
         },
     });
-});
-
-// Handle invite link click
-bot.onText(/\/invite/, async (msg) => {
-    const chatId = msg.chat.id;
-
-    try {
-        // Call backend to generate invite link for this user
-        const response = await axios.post('https://lostcatsbackend.onrender.com/generate-invite-link', {
-            telegramId: chatId,
-        });
-        
-        const inviteLink = response.data.inviteLink;
-        bot.sendMessage(chatId, `Share this link with your friends to earn CTS: ${inviteLink}`);
-    } catch (error) {
-        console.error('Error generating invite link:', error);
-        bot.sendMessage(chatId, 'Failed to generate invite link.');
-    }
 });
 
 bot.on('message', (msg) => {
