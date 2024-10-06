@@ -6,7 +6,6 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     const { userName } = req.body;
 
-    // Removed the duplicate username check
     try {
         const user = new User({ userName });
         await user.save();
@@ -43,6 +42,22 @@ router.patch('/:userName', async (req, res) => {
         res.json(user);
     } catch (err) {
         res.status(400).json({ message: err.message });
+    }
+});
+
+// Check if user exists (For frontend verification)
+router.get('/check/:userName', async (req, res) => {
+    const { userName } = req.params;
+    try {
+        const user = await User.findOne({ userName });
+
+        if (user) {
+            return res.json({ exists: true });  // Return true if user exists
+        } else {
+            return res.json({ exists: false }); // Return false if user doesn't exist
+        }
+    } catch (err) {
+        res.status(500).json({ exists: false });
     }
 });
 
