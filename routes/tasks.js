@@ -1,26 +1,22 @@
 const express = require('express');
-const Task = require('../models/Task');
+const mongoose = require('mongoose'); // Import mongoose for ObjectId
+const Task = require('../models/Task'); // Ensure correct path
 const User = require('../models/User');
 
 const router = express.Router();
 
-// Create a new task
-router.post('/', async (req, res) => {
-  try {
-    const task = new Task(req.body);
-    await task.save();
-    res.status(201).json(task);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+// Helper function to validate ObjectId
+const isValidObjectId = (id) => {
+  return mongoose.Types.ObjectId.isValid(id) && (id.length === 24);
+};
 
-// Get all tasks (no changes)
+// GET all tasks
 router.get('/', async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find(); // Get all tasks from the database
     res.json(tasks);
   } catch (error) {
+    console.error("Error fetching tasks:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -28,8 +24,17 @@ router.get('/', async (req, res) => {
 // Mark a task as completed (update user, don't delete task)
 router.post('/complete/:id', async (req, res) => {
   const { userName } = req.body;
+  const taskId = req.params.id; // Expecting taskId to be a string
+
+  // Validate the task ID
+  if (!isValidObjectId(taskId)) {
+    return res.status(400).json({ message: 'Invalid task ID format' });
+  }
+
   try {
-    const task = await Task.findById(req.params.id);
+    // Use valid ObjectId
+    const task = await Task.findById(taskId);
+    
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }
@@ -40,54 +45,19 @@ router.post('/complete/:id', async (req, res) => {
     }
 
     // Check if the task has already been completed by this user
-    if (user.completedTasks.includes(task.id)) {
+    // Assuming completedTasks is stored as an array of strings in the user model
+    if (user.completedTasks.includes(taskId)) { // Compare directly with taskId as a string
       return res.status(400).json({ message: 'Task already completed' });
     }
 
     // Update user's CTS balance and add task to completed list
     user.ctsBalance += task.reward;
-    user.completedTasks.push(task.id); // Add task ID to user's completed tasks
+    user.completedTasks.push(taskId); // Push taskId as a string
     await user.save();
 
     res.json({ message: 'Task completed successfully', newBalance: user.ctsBalance });
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Get completed tasks for a specific user
-router.get('/completed/:userName', async (req, res) => {
-  try {
-    const { userName } = req.params;
-    const user = await User.findOne({ userName });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.json({ completedTasks: user.completedTasks });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Update a task by ID (no changes)
-router.put('/:id', async (req, res) => {
-  try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!task) return res.status(404).send('Task not found');
-    res.json(task);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Delete a task by ID (no changes)
-router.delete('/:id', async (req, res) => {
-  try {
-    const task = await Task.findByIdAndDelete(req.params.id);
-    if (!task) return res.status(404).send('Task not found');
-    res.json(task);
-  } catch (error) {
+    console.error("Error in completing task:", error);
     res.status(500).json({ error: error.message });
   }
 });

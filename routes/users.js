@@ -6,6 +6,9 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     const { userName } = req.body;
 
+     // Log the request body to ensure it's received
+     console.log("Received POST request with body:", req.body);
+
     try {
         const user = new User({ userName });
         await user.save();
