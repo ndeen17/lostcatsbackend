@@ -20,17 +20,22 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Set current user
+
+// Set current user (simplified)
 router.post('/set-current-user', (req, res) => {
     const { userName } = req.body;
+    console.log("Received request body:", req.body); // Log the request body
     if (!userName) {
         return res.status(400).json({ message: 'Username is required' });
     }
+
+    // Set the current user in the in-memory variable
     currentUserName = userName;
-    res.json({ message: 'Current user set successfully' });
+    console.log("Setting current user to:", userName);
+    res.json({ message: 'Current user set successfully', userName });
 });
 
-// Get current user (fetch the user based on the stored username)
+// Get current user (simplified)
 router.get('/current', async (req, res) => {
     try {
         if (!currentUserName) {

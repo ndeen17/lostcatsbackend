@@ -7,7 +7,6 @@ const REWARD_AMOUNT = 500;
 // Endpoint to generate an invite link
 router.post('/generate-invite-link', async (req, res) => {
     const { userName } = req.body;
-    console.log("Received POST request with body:", req.body); 
     try {
         let user = await User.findOne({ userName });
         if (!user) {

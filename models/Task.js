@@ -10,6 +10,7 @@ const taskSchema = new mongoose.Schema({
     type: Number,
     required: true // Each task gives a reward in CTS
   }
+  
 });
 
 // Create a model from the schema
