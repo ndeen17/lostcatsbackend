@@ -60,4 +60,25 @@ router.post('/accept-invite/:inviteCode', async (req, res) => {
     }
 });
 
+// Endpoint to get invite data
+router.get('/invite-data/:userName', async (req, res) => {
+    const { userName } = req.params;
+
+    try {
+        const user = await User.findOne({ userName });
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        const inviteData = {
+            invitedFriends: user.invitedFriends,
+            totalCTS: user.totalCTS
+        };
+
+        res.status(200).json(inviteData);
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch invite data." });
+    }
+});
+
 module.exports = router;

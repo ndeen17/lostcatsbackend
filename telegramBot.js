@@ -55,12 +55,14 @@ const chatId = msg.chat.id;
 const messageText = msg.text;
 
 if (messageText && !messageText.startsWith('/')) {
-bot.sendMessage(chatId, 'Please press Start to begin.', {
-    reply_markup: {
-        keyboard: [[{ text: 'Start' }]], 
-        resize_keyboard: true,
-        one_time_keyboard: true,
-    },
-});
+    bot.sendMessage(chatId, 'Please press Start to begin.', {
+        reply_markup: {
+            keyboard: [[{ text: 'Start' }]], 
+            resize_keyboard: true,
+            one_time_keyboard: true,
+        },
+    }).catch(error => {
+        console.error('Error sending message:', error);
+    });
 }
 });
