@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   inviteLink: { type: String },  // Unique invite link for each user
   ctsBalance: { type: Number, default: 1000 },
   invitedFriends: { type: [String], default: [] }, // Array to store invitees' usernames
-  totalCTS: { type: Number, default: 0 }, // CTS earned from invites           
+  totalCTS: { type: Number, default: 0 }, // CTS earned from invites         
 });
 
 const User = mongoose.model('User', userSchema);

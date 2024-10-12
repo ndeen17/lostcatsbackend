@@ -2,6 +2,8 @@ const express = require('express');
 const User = require('../models/User'); // Import the User model
 const router = express.Router();
 
+let currentUserName = null;
+
 // Create a new user
 router.post('/', async (req, res) => {
     const { userName } = req.body;
@@ -15,6 +17,33 @@ router.post('/', async (req, res) => {
         res.status(201).json(user);
     } catch (err) {
         res.status(400).json({ message: err.message });
+    }
+});
+
+// Set current user
+router.post('/set-current-user', (req, res) => {
+    const { userName } = req.body;
+    if (!userName) {
+        return res.status(400).json({ message: 'Username is required' });
+    }
+    currentUserName = userName;
+    res.json({ message: 'Current user set successfully' });
+});
+
+// Get current user (fetch the user based on the stored username)
+router.get('/current', async (req, res) => {
+    try {
+        if (!currentUserName) {
+            return res.status(404).json({ message: 'Current user not set' });
+        }
+        const user = await User.findOne({ userName: currentUserName });
+        console.log("Fetched user:", user); // Log the fetched user
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ userName: user.userName });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
