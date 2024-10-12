@@ -12,12 +12,23 @@ bot.on('polling_error', (error) => {
 });
 
 // Handle /start command
-bot.onText(/\/start/, async (msg) => {
+bot.onText(/\/start (.+)?/, async (msg, match) => {
     const chatId = msg.chat.id;
-    const telegramId = chatId; // This is the unique identifier for each user
+    const inviteCode = match[1]; // Extract the invite code if present
 
-    // Send welcome message
-    const welcomeMessage = `
+    if (inviteCode) {
+        // If invite code is present, direct the user to the inviteesignup page
+        const inviteeSignupUrl = `https://lost-cats.onrender.com//invitee-signup?inviteCode=${inviteCode}`;
+        await bot.sendMessage(chatId, 'You have been invited! Please complete your signup:', {
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: 'Complete Signup', web_app: { url: inviteeSignupUrl } }],
+                ],
+            },
+        });
+    } else {
+        // Send welcome message for new users
+        const welcomeMessage = `
 Welcome to the Game! 🐾
 
 How to play:
@@ -25,31 +36,31 @@ How to play:
 2. Climb up the leaderboard.
 3. Have fun!`;
 
-    const gameUrl = 'https://lost-cats.onrender.com'; // Your live game URL
+const gameUrl = 'https://lost-cats.onrender.com'; // Your live game URL
 
-
-    // Send the welcome message and play button
-    await bot.sendMessage(chatId, welcomeMessage);
-    await bot.sendMessage(chatId, 'NODUST!🐾 welcomes you to the hood', {
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: 'Play Game', web_app: { url: gameUrl } }],
-            ],
-        },
-    });
+// Send the welcome message and play button
+await bot.sendMessage(chatId, welcomeMessage);
+await bot.sendMessage(chatId, 'NODUST!🐾 welcomes you to the hood', {
+    reply_markup: {
+        inline_keyboard: [
+            [{ text: 'Play Game', web_app: { url: gameUrl } }],
+        ],
+    },
+});
+}
 });
 
 bot.on('message', (msg) => {
-    const chatId = msg.chat.id;
-    const messageText = msg.text;
+const chatId = msg.chat.id;
+const messageText = msg.text;
 
-    if (messageText && !messageText.startsWith('/')) {
-        bot.sendMessage(chatId, 'Please press Start to begin.', {
-            reply_markup: {
-                keyboard: [[{ text: 'Start' }]], 
-                resize_keyboard: true,
-                one_time_keyboard: true,
-            },
-        });
-    }
+if (messageText && !messageText.startsWith('/')) {
+bot.sendMessage(chatId, 'Please press Start to begin.', {
+    reply_markup: {
+        keyboard: [[{ text: 'Start' }]], 
+        resize_keyboard: true,
+        one_time_keyboard: true,
+    },
+});
+}
 });

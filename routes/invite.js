@@ -12,8 +12,12 @@ router.post('/generate-invite-link', async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
+        if (user.inviteLink) {
+            return res.status(200).json({ inviteLink: user.inviteLink });
+        }
         const uniqueCode = Math.random().toString(36).substr(2, 9);
-        user.inviteLink = `https://t.me/notdustbot?profile/invite/${uniqueCode}`;
+        user.inviteLink = `https://t.me/notdustbot?start=${uniqueCode}`;
+        user.inviteCode = uniqueCode; // Store the invite code separately
         await user.save();
         res.status(200).json({ inviteLink: user.inviteLink });
     } catch (error) {
@@ -21,30 +25,36 @@ router.post('/generate-invite-link', async (req, res) => {
     }
 });
 
+module.exports = router;
+
 // Invitee Sign-Up with the invite code
 router.post('/accept-invite/:inviteCode', async (req, res) => {
     const { inviteCode } = req.params;
     const { userName } = req.body;
 
     try {
-        const inviter = await User.findOne({ inviteLink: { $regex: inviteCode } });
+        // Find the inviter by invite code
+        let inviter = await User.findOne({ inviteCode });
         if (!inviter) {
-            return res.status(400).json({ message: "Invalid invite link." });
+            return res.status(404).json({ message: "Invite link not found." });
         }
 
-        let invitee = await User.findOne({ userName });
-        if (!invitee) {
-            invitee = new User({ userName, ctsBalance: 1000 });
-            await invitee.save();
-        } else {
-            return res.status(400).json({ message: "Invitee already exists." });
+        // Check if the invitee is already in the invitedFriends array
+        if (inviter.invitedFriends.includes(userName)) {
+            return res.status(400).json({ message: "User already invited." });
         }
 
-        inviter.totalCTS += REWARD_AMOUNT;
-        inviter.ctsBalance += REWARD_AMOUNT;
+        // Add the invitee's username to the invitedFriends array
+        inviter.invitedFriends.push(userName);
+
+        // Reward the inviter with 600 NDT
+        inviter.ctsBalance = (inviter.ctsBalance || 0) + 600;
+        inviter.totalCTS = (inviter.totalCTS || 0) + 600;
+
+        // Save the changes to the inviter's document
         await inviter.save();
 
-        res.status(200).json({ message: `Successfully accepted invite. ${REWARD_AMOUNT} CTS awarded to the inviter.` });
+        res.status(200).json({ message: "Invite accepted and inviter rewarded." });
     } catch (error) {
         res.status(500).json({ message: "Failed to accept invite." });
     }
