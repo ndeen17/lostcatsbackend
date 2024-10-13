@@ -13,7 +13,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
     // Define your tasks
     const tasks = [
-        { _id: new mongoose.Types.ObjectId(), task: 'Join our Telegram group', reward: 500, url: 'https://telegram.org' },
+        { _id: new mongoose.Types.ObjectId(), task: 'Join our Community', reward: 1000, url: 'https://t.me/NotdustClan' },
         { _id: new mongoose.Types.ObjectId(), task: 'Follow us on Twitter', reward: 600, url: 'https://twitter.com' },
         // Add more tasks as needed
     ];

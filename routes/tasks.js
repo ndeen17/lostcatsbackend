@@ -1,7 +1,8 @@
 const express = require('express');
-const mongoose = require('mongoose'); // Import mongoose for ObjectId
-const Task = require('../models/Task'); // Ensure correct path
+const mongoose = require('mongoose');
+const Task = require('../models/Task');
 const User = require('../models/User');
+const UserTask = require('../models/UserTask');
 
 const router = express.Router();
 
@@ -10,10 +11,17 @@ const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id) && (id.length === 24);
 };
 
-// GET all tasks
+// GET all tasks that are not completed by the user
 router.get('/', async (req, res) => {
+  const { userName } = req.query; // Expecting userName to be passed as a query parameter
+
   try {
-    const tasks = await Task.find(); // Get all tasks from the database
+    // Fetch completed tasks for the user
+    const completedTasks = await UserTask.find({ userName }).select('taskId');
+    const completedTaskIds = completedTasks.map(task => task.taskId);
+
+    // Get all tasks that are not in the user's completedTasks list
+    const tasks = await Task.find({ _id: { $nin: completedTaskIds } });
     res.json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
@@ -21,7 +29,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Mark a task as completed (update user, don't delete task)
+// Mark a task as completed (store in UserTask collection)
 router.post('/complete/:id', async (req, res) => {
   const { userName } = req.body;
   const taskId = req.params.id; // Expecting taskId to be a string
@@ -45,14 +53,17 @@ router.post('/complete/:id', async (req, res) => {
     }
 
     // Check if the task has already been completed by this user
-    // Assuming completedTasks is stored as an array of strings in the user model
-    if (user.completedTasks.includes(taskId)) { // Compare directly with taskId as a string
+    const existingUserTask = await UserTask.findOne({ userName, taskId });
+    if (existingUserTask) {
       return res.status(400).json({ message: 'Task already completed' });
     }
 
-    // Update user's CTS balance and add task to completed list
+    // Create a new UserTask entry
+    const userTask = new UserTask({ userName, taskId });
+    await userTask.save();
+
+    // Update user's CTS balance
     user.ctsBalance += task.reward;
-    user.completedTasks.push(taskId); // Push taskId as a string
     await user.save();
 
     res.json({ message: 'Task completed successfully', newBalance: user.ctsBalance });

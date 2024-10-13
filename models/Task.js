@@ -9,8 +9,11 @@ const taskSchema = new mongoose.Schema({
   reward: {
     type: Number,
     required: true // Each task gives a reward in CTS
+  },
+  url: {
+    type: String,
+    required: true // Each task has a URL to complete it
   }
-  
 });
 
 // Create a model from the schema

@@ -1,18 +1,16 @@
 const TelegramBot = require('node-telegram-bot-api');
-const axios = require('axios'); // Use axios to send requests to your backend
+const dotenv = require('dotenv');
+
+dotenv.config(); // Load environment variables from .env file
 
 // Replace with your actual token (use environment variables in production)
-const token = '7862848496:AAGpMgpRBlilVa8Mc8sFZvr6Sm_BipMavWA'; // Always use environment variables for sensitive data
-const bot = new TelegramBot(token, { polling: true });
+const token = '7862848496:AAGpMgpRBlilVa8Mc8sFZvr6Sm_BipMavWA'; // Store your token in the .env file
+const bot = new TelegramBot(token, { polling: true }); // Enable polling for real-time updates
 
 console.log('Telegram Bot is running...');
 
-bot.on('polling_error', (error) => {
-    console.error('Polling error:', error.code, error.message);
-});
-
-// Handle /start command
-bot.onText(/\/start (.+)?/, async (msg, match) => {
+// Handle /start command with optional invite code
+bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const inviteCode = match[1]; // Extract the invite code if present
 
@@ -64,10 +62,20 @@ bot.on('message', (msg) => {
 
     console.log('Received message:', messageText); // Log the received message
 
-    if (messageText && !messageText.startsWith('/')) {
+    if (messageText === 'Start') {
+        bot.sendMessage(chatId, 'Welcome! How can I assist you today?', {
+            reply_markup: {
+                keyboard: [[{ text: 'Help' }, { text: 'Play Game' }]], 
+                resize_keyboard: true,
+                one_time_keyboard: true,
+            },
+        }).catch(error => {
+            console.error('Error sending message:', error);
+        });
+    } else if (messageText && !messageText.startsWith('/')) {
         bot.sendMessage(chatId, 'Please press Start to begin.', {
             reply_markup: {
-                keyboard: [[{ text: 'Start' }]], 
+                keyboard: [[{ text: 'Goku', web_app: { url: gameUrl } }]], 
                 resize_keyboard: true,
                 one_time_keyboard: true,
             },
