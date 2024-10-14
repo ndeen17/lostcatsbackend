@@ -18,7 +18,7 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
         if (!inviteCode) {
             // Handle users without an invite code
             const welcomeMessage = `
-Welcome to the Game! 🐾
+Welcome to the Game! 
 
 How to play:
 1. Complete tasks to earn points.
@@ -29,10 +29,12 @@ How to play:
 
             // Send the welcome message and play button
             await bot.sendMessage(chatId, welcomeMessage);
-            await bot.sendMessage(chatId, 'NODUST!🐾 welcomes you to the hood', {
+            await bot.sendMessage(chatId, 'Notdust welcomes you to the clan💎', {
                 reply_markup: {
                     inline_keyboard: [
                         [{ text: 'Play Game', web_app: { url: gameUrl } }],
+                        [{ text: 'Join Notdust community', url: 'https://t.me/NotdustClan' }],
+                        [{ text: 'Follow Our Twitter', url: 'https://x.com/NotdustClan' }]
                     ],
                 },
             });

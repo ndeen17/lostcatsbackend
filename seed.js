@@ -14,8 +14,11 @@ mongoose.connect(process.env.MONGODB_URI, {
     // Define your tasks
     const tasks = [
         { _id: new mongoose.Types.ObjectId(), task: 'Join our Community', reward: 1000, url: 'https://t.me/NotdustClan' },
-        { _id: new mongoose.Types.ObjectId(), task: 'Follow us on Twitter', reward: 600, url: 'https://twitter.com' },
-        // Add more tasks as needed
+        { _id: new mongoose.Types.ObjectId(), task: 'Follow us on Twitter', reward: 600, url: 'https://x.com/NotdustClan' },
+        { _id: new mongoose.Types.ObjectId(), task: 'Follow Our Instagram page', reward: 500, url: 'https://www.instagram.com/notdustclan?igsh=MWlxc2J2bHp2YnBocA==' },
+        { _id: new mongoose.Types.ObjectId(), task: 'Follow Our Facebook page', reward: 500, url: 'https://lost-cats.onrender.com' },
+        { _id: new mongoose.Types.ObjectId(), task: 'Play our Game', reward: 500, url: 'https://lost-cats.onrender.com' }
+
     ];
 
     // Seed tasks into the database
