@@ -17,7 +17,9 @@ mongoose.connect(process.env.MONGODB_URI, {
         { _id: new mongoose.Types.ObjectId(), task: 'Follow us on Twitter', reward: 600, url: 'https://x.com/NotdustClan' },
         { _id: new mongoose.Types.ObjectId(), task: 'Follow Our Instagram page', reward: 500, url: 'https://www.instagram.com/notdustclan?igsh=MWlxc2J2bHp2YnBocA==' },
         { _id: new mongoose.Types.ObjectId(), task: 'Follow Our Facebook page', reward: 500, url: 'https://lost-cats.onrender.com' },
-        { _id: new mongoose.Types.ObjectId(), task: 'Play our Game', reward: 500, url: 'https://lost-cats.onrender.com' }
+        { _id: new mongoose.Types.ObjectId(), task: 'Play our Game', reward: 500, url: 'https://lost-cats.onrender.com' },
+        { _id: new mongoose.Types.ObjectId(), task: 'Boost Telegram Channel', reward: 3000, url: 'https://t.me/boost/NotdustClan' }
+
 
     ];
 
