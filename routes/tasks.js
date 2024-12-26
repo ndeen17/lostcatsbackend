@@ -12,7 +12,8 @@ const isValidObjectId = (id) => {
 
 // GET all tasks and completed tasks for the user
 router.get('/', async (req, res) => {
-  const { userName } = req.query;
+  const { userName, taskType } = req.query;
+  console.log(userName, taskType)
 
   try {
     const user = await User.findOne({ userName }).populate('completedTasks');

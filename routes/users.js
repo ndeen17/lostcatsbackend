@@ -69,14 +69,22 @@ router.get('/:userName', async (req, res) => {
 // Update user's CTS balance
 router.patch('/:userName', async (req, res) => {
     const { userName } = req.params;
-    const { ctsBalance } = req.body;
+    const { ctsBalance, taskType, day } = req.body;
+
+    console.log(ctsBalance, userName)
 
     try {
         const user = await User.findOneAndUpdate({ userName }, { ctsBalance }, { new: true });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.json(user);
+
+        if(taskType !== null){
+           res.json({...user, taskType:taskType, day:day});
+        }else{
+            res.json({...user, taskType:"Others"})
+        }
+     
     } catch (err) {
         res.status(400).json({ message: err.message });
     }

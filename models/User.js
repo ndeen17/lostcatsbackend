@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
   ctsBalance: { type: Number, default: 1000 },
   invitedFriends: { type: [String], default: [] }, // Array to store invitees' usernames
   totalCTS: { type: Number, default: 0 }, // CTS earned from invites
-  completedTasks: { type: [mongoose.Schema.Types.ObjectId], ref: 'Task', default: [] } // Add this field         
+  completedTasks: { type: [mongoose.Schema.Types.ObjectId], ref: 'Task', default: [] },  
+  currentDayStreak: {type: String}
 });
 
 const User = mongoose.model('User', userSchema);
