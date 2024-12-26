@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
   origin: '*', // Allows requests from any origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
+  methods: ['GET', 'POST', 'PUT', 'DELETE', "PATCH"], // Specify allowed HTTP methods
 }));
 app.use(express.json());
 
@@ -50,5 +50,6 @@ app.post(`/bot${process.env.BOT_TOKEN}`, (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
+
   console.log(`Server is running on port ${PORT}`);
 });
