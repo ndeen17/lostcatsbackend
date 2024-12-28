@@ -80,13 +80,13 @@ router.patch('/:userName', async (req, res) => {
         }
 
         if(taskType !== null){
-           res.json({...user, taskType:taskType, day:day});
+           res.json({...user, taskType:taskType, day:day, status:true});
         }else{
-            res.json({...user, taskType:"Others"})
+            res.json({...user, taskType:"Others",status:true})
         }
      
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        res.status(400).json({ message: err.message,status:false });
     }
 });
 
