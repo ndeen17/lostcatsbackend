@@ -71,7 +71,7 @@ router.patch('/:userName', async (req, res) => {
     const { userName } = req.params;
     const { ctsBalance, taskType, day } = req.body;
 
-    console.log(ctsBalance, userName)
+    console.log(req.body)
 
     try {
         const user = await User.findOneAndUpdate({ userName }, { ctsBalance }, { new: true });
@@ -86,6 +86,7 @@ router.patch('/:userName', async (req, res) => {
         }
      
     } catch (err) {
+        console.log(err.message)
         res.status(400).json({ message: err.message,status:false });
     }
 });
