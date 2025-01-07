@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Task = require('../models/Task');
 const User = require('../models/User');
+const dailyTasksController = require('../controllers/dailyTask'); // Adjust path as needed
+
 
 const router = express.Router();
 
@@ -63,5 +65,18 @@ router.post('/complete/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Get the current daily task data for a user
+router.get('/dailyTasks/:userName', dailyTasksController.getDailyTasks);
+
+// Update daily task streak (e.g., when a user completes a task)
+router.put('/dailyTasks/:userName', dailyTasksController.updateDailyTaskStreak);
+
+// Claim the reward for the streak
+router.post('/dailyTasks/claimReward/:userName', dailyTasksController.claimReward);
+
+// Reset the streak (e.g., after inactivity or timeout)
+router.post('/dailyTasks/resetStreak/:userName', dailyTasksController.resetStreak);
+
 
 module.exports = router;
